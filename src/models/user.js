@@ -1,12 +1,36 @@
 const mongoose = require("mongoose");
+const bcryptjs = require("bcryptjs");
 
-const Schema = mongoose.Schema;
+const UserSchema = mongoose.Schema;
 
-const User = Schema({
-    username:{type:String, required:true},
-    password:{type:String, required:true},
-    active:{type:Boolean, default:true},
-    createdAt:{type:String, default:Date.now()}
+const User = UserSchema({
+    username:{
+        type:String,
+        unique:true, 
+        required:true
+    },
+    password:{
+        type:String, 
+        required:true,
+        select: false
+    },
+    active:{
+        type:Boolean, 
+        default:true
+    },
+    createdAt:{
+        type:String, 
+        default:Date.now
+    }
 });
+
+
+//Antes de salvar converter para hash
+User.pre("save",  async function(next){
+    const genSalt = 10;
+    const hash = await bcryptjs.hash(this.password, genSalt);
+    this.password = hash;
+    next();
+})
 
 mongoose.model("User", User);
