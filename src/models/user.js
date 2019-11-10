@@ -10,7 +10,8 @@ const User = UserSchema({
         required:true
     },
     password:{
-        type:String, 
+        type:String,
+        unique:true, 
         required:true,
         select: false
     },
@@ -26,7 +27,7 @@ const User = UserSchema({
 
 
 //Antes de salvar converter para hash
-User.pre("save",  async function(next){
+User.pre("save",  async (next) => {
     const genSalt = 10;
     const hash = await bcryptjs.hash(this.password, genSalt);
     this.password = hash;
