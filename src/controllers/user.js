@@ -18,10 +18,9 @@ module.exports = {
 
         const user = await User.findOne({username}).select("+password");
 
-    if(!await bcryptjs.compare(password, user.password)){
-       return res.status("400").json({"error":"Wrong password"});
+    if(!user || !await bcryptjs.compare(password, user.password)){
+        return res.status("400").json({"error":"User or Password is Wrong"});
     }
-
     
     user.password = undefined;
     res.json({
